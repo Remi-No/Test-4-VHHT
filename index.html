@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ĐỀ KIỂM TRA 4 - Trắc nghiệm online</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f1f5f9;
+    color:#111827;
+    line-height:1.6;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+    padding:20px;
+}
+
+header{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:white;
+    padding:30px;
+    border-radius:18px;
+    margin-bottom:25px;
+    text-align:center;
+    box-shadow:0 5px 15px rgba(0,0,0,.15);
+}
+
+header h1{
+    font-size:32px;
+    margin-bottom:10px;
+}
+
+header p{
+    opacity:.95;
+}
+
+.question{
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    margin-bottom:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+.question h3{
+    margin-bottom:15px;
+    color:#1e3a8a;
+}
+
+.option{
+    border:2px solid #dbeafe;
+    padding:12px;
+    border-radius:12px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:.2s;
+    background:#fff;
+}
+
+.option:hover{
+    background:#eff6ff;
+}
+
+.option.correct{
+    background:#dcfce7;
+    border-color:#16a34a;
+    color:#166534;
+    font-weight:bold;
+}
+
+.option.wrong{
+    background:#fee2e2;
+    border-color:#dc2626;
+    color:#991b1b;
+}
+
+.option.locked{
+    pointer-events:none;
+}
+
+.result{
+    margin-top:8px;
+    font-weight:bold;
+}
+
+.correct-text{
+    color:#15803d;
+}
+
+.wrong-text{
+    color:#dc2626;
+}
+
+.submit-btn{
+    width:100%;
+    padding:16px;
+    border:none;
+    background:#2563eb;
+    color:white;
+    font-size:18px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:.2s;
+    margin-top:20px;
+}
+
+.submit-btn:hover{
+    background:#1d4ed8;
+}
+
+.score-box{
+    margin-top:25px;
+    background:white;
+    padding:25px;
+    border-radius:18px;
+    text-align:center;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    display:none;
+}
+
+.score-box h2{
+    color:#1d4ed8;
+    margin-bottom:10px;
+}
+
+@media(max-width:768px){
+
+    header h1{
+        font-size:24px;
+    }
+
+    .question{
+        padding:15px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>ĐỀ KIỂM TRA 4</h1>
+    <p>Các thời kỳ phiên dịch Kinh điển</p>
+    <br>
+    <p><strong>Chọn đáp án để xem đúng/sai ngay</strong></p>
+    <p>Sai → chọn lại đến khi đúng</p>
+</header>
+
+<div id="quiz"></div>
+
+<button class="submit-btn" onclick="submitQuiz()">
+    Nộp bài
+</button>
+
+<div class="score-box" id="scoreBox">
+    <h2>KẾT QUẢ</h2>
+    <p id="scoreText"></p>
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+
+{
+q:"Câu 1: Trong các dịch phẩm của Ngài Cưu Ma La Thập, Kinh Pháp Hoa ảnh hưởng:",
+options:[
+"Thiên Thai Tông",
+"Hoa Nghiêm Tông",
+"Tịnh Độ Tông",
+"Luật Tông"
+],
+answer:0
+},
+
+{
+q:"Câu 2: Trong các dịch phẩm của Ngài Cưu Ma La Thập, ảnh hưởng Thiên Thai Tông là:",
+options:[
+"Kinh Pháp Hoa",
+"Kinh Kim Cang",
+"Thành Thực Luận",
+"Kinh A Di Đà"
+],
+answer:0
+},
+
+{
+q:"Câu 3: Trong các dịch phẩm của Ngài Cưu Ma La Thập, Kinh A Di Đà ảnh hưởng:",
+options:[
+"Thiên Thai Tông",
+"Tịnh Độ Tông",
+"Thiền Tông",
+"Hoa Nghiêm Tông"
+],
+answer:1
+},
+
+{
+q:"Câu 4: Trong các dịch phẩm của Ngài Cưu Ma La Thập, ảnh hưởng Tịnh Độ Tông là:",
+options:[
+"Kinh Kim Cang",
+"Kinh Pháp Hoa",
+"Kinh A Di Đà",
+"Thành Thực Luận"
+],
+answer:2
+},
+
+{
+q:"Câu 5: Trong các dịch phẩm của Ngài Cưu Ma La Thập, Kinh Kim Cang ảnh hưởng:",
+options:[
+"Tịnh Độ Tông",
+"Hoa Nghiêm Tông",
+"Thiền Tông",
+"Thiên Thai Tông"
+],
+answer:2
+},
+
+{
+q:"Câu 6: Trong các dịch phẩm của Ngài Cưu Ma La Thập, ảnh hưởng Thiền Tông là:",
+options:[
+"Kinh Kim Cang",
+"Trung Luận",
+"Kinh A Di Đà",
+"Thành Thực Luận"
+],
+answer:0
+},
+
+{
+q:"Câu 7: Trong các dịch phẩm của Ngài Cưu Ma La Thập, Thập Trụ Tỳ Bà Sa Luận ảnh hưởng:",
+options:[
+"Thiên Thai Tông",
+"Hoa Nghiêm Tông",
+"Thiền Tông",
+"Luật Tông"
+],
+answer:1
+},
+
+{
+q:"Câu 8: Trong các dịch phẩm của Ngài Cưu Ma La Thập, ảnh hưởng Hoa Nghiêm Tông là:",
+options:[
+"Kinh Kim Cang",
+"Thập Trụ Tỳ Bà Sa Luận",
+"Kinh Pháp Hoa",
+"Kinh A Di Đà"
+],
+answer:1
+},
+
+{
+q:"Câu 9: Trong các dịch phẩm của Ngài Cưu Ma La Thập, Thành Thực Luận ảnh hưởng:",
+options:[
+"Tam Luận Tông",
+"Duy Thức Tông",
+"Luật Tông",
+"Thành Thực Tông"
+],
+answer:3
+},
+
+{
+q:"Câu 10: Trong các dịch phẩm của Ngài Cưu Ma La Thập, ảnh hưởng Thành Thực Tông là:",
+options:[
+"Kinh Kim Cang",
+"Thành Thực Luận",
+"Kinh Pháp Hoa",
+"Thập Trụ Tỳ Bà Sa Luận"
+],
+answer:1
+},
+
+{
+q:"Câu 11: Trong các dịch phẩm của Ngài Cưu Ma La Thập, Tứ Luận ảnh hưởng:",
+options:[
+"Duy Thức Tông",
+"Luật Tông",
+"Tam Luận Tông",
+"Thành Thực Tông"
+],
+answer:2
+},
+
+{
+q:"Câu 12: Trong các dịch phẩm của Ngài Cưu Ma La Thập, Thập Tụng Luật ảnh hưởng:",
+options:[
+"Duy Thức Tông",
+"Tam Luận Tông",
+"Luật Tông",
+"Thành Thực Tông"
+],
+answer:2
+},
+
+{
+q:"Câu 13: Các dịch phẩm quan trọng của Ngài Cưu Ma La Thập:",
+options:[
+"Kinh Duy Ma, Kinh Pháp Hoa, Kinh Thắng Man",
+"Kinh Duy Ma, Kinh Pháp Hoa, kinh Giải Thâm Mật",
+"Kinh Duy Ma, Kinh Pháp Hoa, Kinh Đại Bát Nhã",
+"Kinh Duy Ma, Kinh Hoa Nghiêm, kinh Phạm Võng"
+],
+answer:0
+},
+
+{
+q:"Câu 14: Định bản Kinh Kim Cang là dịch phẩm của Ngài:",
+options:[
+"Trúc Pháp Hộ",
+"Huệ Viễn",
+"Cưu Ma La Thập",
+"Huyền Tráng"
+],
+answer:2
+},
+
+{
+q:"Câu 15: Định bản Kinh Pháp Hoa là dịch phẩm của Ngài:",
+options:[
+"Huệ Viễn",
+"Huyền Tráng",
+"Cưu Ma La Thập",
+"Trúc Pháp Hộ"
+],
+answer:2
+},
+
+{
+q:"Câu 16: Định bản Kinh Duy Ma là dịch phẩm của Ngài:",
+options:[
+"Cưu Ma La Thập",
+"Trúc Pháp Hộ",
+"Huệ Viễn",
+"Huyền Tráng"
+],
+answer:0
+},
+
+{
+q:"Câu 17: Ngài Đạo Sanh là cao Tăng nước:",
+options:[
+"Hậu Tần",
+"Hậu Hán",
+"Tiền Hán",
+"Ngô"
+],
+answer:0
+},
+
+{
+q:"Câu 18: Người đầu tiên đưa ra tư tưởng “Nhất xiển đề cũng có thể thành Phật” là Ngài:",
+options:[
+"Huệ Viễn",
+"Đạo An",
+"Pháp Hiển",
+"Đạo Sanh"
+],
+answer:3
+},
+
+{
+q:"Câu 19: Ngài Đạo Sanh là đệ tử của Ngài:",
+options:[
+"Đạo An",
+"Pháp Hiển",
+"Cưu Ma La Thập",
+"Trúc Pháp Hộ"
+],
+answer:2
+},
+
+{
+q:"Câu 20: Ngài Tăng Triệu là cao Tăng nước:",
+options:[
+"Hậu Hán",
+"Hậu Tần",
+"Tiền Hán",
+"Ngô"
+],
+answer:1
+},
+
+{
+q:"21. “Giải Không đệ nhất” là Ngài:",
+options:["Pháp Hiển","Đạo Sanh","Huệ Viễn","Tăng Triệu"],
+answer:3
+},
+
+{
+q:"22. Ngài Tăng Triệu là đệ tử của Ngài:",
+options:["Pháp Hiển","Đạo An","Cưu Ma La Thập","Huệ Viễn"],
+answer:2
+},
+
+{
+q:"23. Ngài Huệ Viễn là cao tăng thời:",
+options:["Tiền Hán","Đông Tấn","Tây Tấn","Hậu Hán"],
+answer:1
+},
+
+{
+q:"24. Tác giả bài “Sa môn bất bái vương giả luận” là Ngài:",
+options:["Tăng Triệu","Huệ Viễn","Đạo Sanh","Đạo An"],
+answer:1
+},
+
+{
+q:"25. Tác giả quyển “Đại Trí Độ luận sao” là Ngài:",
+options:["Đạo An","Huệ Viễn","Đạo Sanh","Tăng Triệu"],
+answer:1
+},
+
+{
+q:"26. Ngài Huệ Viễn là tác giả:",
+options:["Đại Trí Độ luận sao","Phật Thuyết Bột kinh sao","Ma Ha Tăng Kỳ Luận","Phật Sở Hành Tán"],
+answer:0
+},
+
+{
+q:"27. Ngài Huệ Viễn là tác giả:",
+options:["Phật Sở Hành Tán","Ma Ha Tăng Kỳ Luận","Phật Thuyết Bột kinh sao","Sa môn bất bái vương giả luận"],
+answer:3
+},
+
+{
+q:"28. Người đầu tiên khởi xướng Pháp môn niệm Phật là Ngài:",
+options:["Chi Lâu Ca Sấm","Huệ Viễn","Trúc Pháp Hộ","Cưu Ma La Thập"],
+answer:1
+},
+
+{
+q:"29. Dịch giả Kinh Hoa Nghiêm 60 quyển là Ngài:",
+options:["Chi Khiêm","Giác Hiền","La Thập","Đàm Đế"],
+answer:1
+},
+
+{
+q:"30. Ngài Giác Hiền là cao Tăng nước:",
+options:["Đông Tấn","Hậu Hán","Ngô","Tiền Hán"],
+answer:0
+},
+
+{
+q:"31. Cao Tăng thời Đông Tấn là Ngài:",
+options:[
+"Khương Tăng Hội, Chi Khiêm",
+"Huệ Viễn, Giác Hiền",
+"An Thế Cao, Chi Lâu Ca Sấm",
+"Đàm Ma Ca La, Đàm Đế"
+],
+answer:1
+},
+
+{
+q:"32. Ngài Đàm Vô Sấm là cao tăng nước:",
+options:["Bắc Lương","Tây Tấn","Hậu Tần","Tiền Tần"],
+answer:0
+},
+
+{
+q:"33. Ngài Đàm Vô Sấm dịch kinh:",
+options:["Kinh Pháp Hoa","Kinh Duy Ma","Đại Bát Niết Bàn","Trung A hàm"],
+answer:2
+},
+
+{
+q:"34. Khai sáng tư tưởng Phật tánh luận là các bộ kinh:",
+options:[
+"Kinh Đại Bát Niết bàn, kinh Thắng Man",
+"Kinh Giải Thâm Mật, Trung Luận",
+"Kinh Đại Bát Niết bàn, Kinh Đạo Hành Bát nhã",
+"Kinh Thắng Man, Kinh Bát Đại Nhân Giác"
+],
+answer:0
+},
+
+{
+q:"35. Khai sáng tư tưởng Phật tánh luận là các bộ kinh:",
+options:[
+"Kinh Giải Thâm Mật, Trung Luận",
+"Kinh Đại Bát Niết bàn, kinh Giải Thâm Mật",
+"Kinh Lăng Già, Kinh Bát Đại Nhân Giác",
+"Kinh Thắng Man, Kinh Đạo Hành Bát nhã"
+],
+answer:1
+},
+
+{
+q:"36. Khai sáng tư tưởng Phật tánh luận là các bộ kinh:",
+options:[
+"Kinh Đại Bát Niết bàn, Kinh Đạo Hành Bát nhã",
+"Kinh Giải Thâm Mật, Trung Luận",
+"Kinh Thắng Man, Kinh Bát Đại Nhân Giác",
+"Kinh Lăng Già, kinh Giải Thâm Mật"
+],
+answer:3
+},
+
+{
+q:"37. Những dịch phẩm ảnh hưởng đến sự thành lập tông Duy Thức là:",
+options:[
+"Thập Địa Kinh luận, Thập nhị môn luận",
+"Thập nhị môn luận, Đại Trí Độ Luận",
+"Thập Địa Kinh luận, Nhiếp Đại Thừa luận",
+"Nhiếp Đại Thừa luận, Trung Luận"
+],
+answer:2
+},
+
+{
+q:"38. Các vị đại dịch giả ở thời Đường là:",
+options:[
+"Huyền Tráng, Huệ Viễn, Nghĩa Tịnh",
+"Cưu Ma La Thập, Huyền Tráng, Bất Không",
+"Huyền Tráng, Đạo Sanh, Nghĩa Tịnh",
+"Huyền Tráng, Nghĩa Tịnh, Bất Không"
+],
+answer:3
+},
+
+{
+q:"39. Phật điển thời kỳ Nam Bắc Triều:",
+options:[
+"do kiều dân nước ngoài đem vào",
+"do tăng sĩ nước ngoài đem vào",
+"do tăng sĩ và kiều dân nước ngoài đem vào",
+"do các vị tăng sĩ Trung Quốc đi Ấn Độ, Tây Vực đem về"
+],
+answer:3
+},
+
+{
+q:"40. Dịch giả quyển Thập Địa Kinh luận là Ngài:",
+options:["Nghĩa Tịnh","Bồ Đề Lưu Chi","Chân Đế","Huyền Tráng"],
+answer:1
+},
+
+{
+q:"41. Ngài Bồ Đề Lưu Chi được tôn là Tổ của:",
+options:["Địa Luận tông","Tam luận tông","Nhiếp luận tông","Duy Thức tông"],
+answer:0
+},
+
+{
+q:"42. Tứ đại dịch giả là:",
+options:[
+"Cưu Ma La Thập, Chân Đế, Huyền Tráng, Bất Không",
+"Trúc Pháp Hộ, Cưu Ma La Thập, Chân Đế, Huyền Tráng",
+"Cưu Ma La Thập, Huệ Viễn, Chân Đế, Huyền Tráng",
+"An Thế Cao, Cưu Ma La Thập, Huyền Tráng, Bất Không"
+],
+answer:0
+},
+
+{
+q:"43. Tứ đại dịch giả là:",
+options:[
+"An Thế Cao, Cưu Ma La Thập, Huyền Tráng, Bất Không",
+"Trúc Pháp Hộ, Cưu Ma La Thập, Chân Đế, Huyền Tráng",
+"Cưu Ma La Thập, Chân Đế, Huyền Tráng, Nghĩa Tịnh",
+"Cưu Ma La Thập, Huệ Viễn, Chân Đế, Huyền Tráng"
+],
+answer:1
+},
+
+{
+q:"44. Dịch giả quyển Nhiếp Đại Thừa luận là Ngài:",
+options:["Bồ Đề Lưu Chi","Chân Đế","Huyền Tráng","Bất Không"],
+answer:1
+},
+
+{
+q:"45. Thập Địa Kinh luận, Nhiếp Đại Thừa luận được dịch trong thời:",
+options:["Tống","Tuỳ Đường","Đông Tấn","Nam Bắc triều"],
+answer:3
+},
+
+{
+q:"46. Các bộ luận nổi tiếng được dịch trong thời kỳ Nam Bắc triều là:",
+options:[
+"Đại Trí Độ luận, Thập Địa Kinh luận",
+"Trung luận, Nhiếp Đại Thừa luận",
+"Nhiếp Đại Thừa luận, Thành Thực Luận",
+"Thập Địa Kinh luận, Nhiếp Đại Thừa luận"
+],
+answer:3
+},
+
+{
+q:"47. Kinh điển được phiên dịch trong thời kỳ Nam Bắc Triều là:",
+options:[
+"Kinh Đại Bát Niết Bàn, Kinh Thắng Man, Kinh Bát Đại Nhân Giác",
+"Kinh Thắng Man, Kinh Lăng Già, Đạo Hành Bát nhã",
+"Kinh Đại Bát Niết Bàn, Kinh Thắng Man, Kinh Lăng Già",
+"Kinh Lăng Già, Kinh Thâm Mật giải thoát, Bát Châu Tam Muội"
+],
+answer:2
+},
+
+{
+q:"48. Thập Địa Kinh luận ảnh hưởng đến sự thành lập:",
+options:["Hoa Nghiêm tông","Tam luận tông","Nhiếp luận tông","Địa luận tông"],
+answer:3
+},
+
+{
+q:"49. Nhiếp luận tông được thành lập do Ngài:",
+options:[
+"Huyền Tráng dịch bộ Nhiếp Đại Thừa luận",
+"Chân Đế dịch bộ Nhiếp Đại Thừa luận",
+"Bất Không dịch bộ Nhiếp Đại Thừa luận",
+"Nghĩa Tịnh dịch bộ Nhiếp Đại Thừa luận"
+],
+answer:1
+},
+
+{
+q:"50. Tiền thân của Duy Thức Pháp Tướng tông là:",
+options:[
+"Địa luận tông và Thiên Thai tông",
+"Địa luận tông và Nhiếp luận tông",
+"Nhiếp luận tông và Hoa Nghiêm tông",
+"Địa luận tông và Thành thực tông"
+],
+answer:1
+},
+
+{
+q:"51. Ngài Huyền Tráng là Sơ Tổ của:",
+options:["Địa luận tông","Nhiếp luận tông","Duy Thức tông","Thiên Thai tông"],
+answer:2
+},
+
+{
+q:"52. Ngài Huyền Tráng dịch kinh Đại Bát nhã gồm:",
+options:["600 quyển","300 quyển","200 quyển","100 quyển"],
+answer:0
+},
+
+{
+q:"53. Tác giả Đại Đường Tây Vực ký là Ngài:",
+options:["Nghĩa Tịnh","Chân Đế","Huyền Tráng","Bất Không"],
+answer:2
+},
+
+{
+q:"54. Dịch giả của Bát Nhã Ba La Mật Đa Tâm kinh là Ngài:",
+options:["Chân Đế","Bất Không","Huyền Tráng","Nghĩa Tịnh"],
+answer:2
+},
+
+{
+q:"55. Nhiếp Đại Thừa luận ảnh hưởng đến sự thành lập:",
+options:["Địa luận tông","Nhiếp luận tông","Tam luận tông","Hoa Nghiêm tông"],
+answer:1
+},
+
+{
+q:"56. Dịch Đại Thừa Khởi Tín luận từ Hoa ngữ ngược về Phạn ngữ là Ngài:",
+options:["Huyền Tráng","Bất Không","Chân Đế","Nghĩa Tịnh"],
+answer:2
+},
+
+{
+q:"57. Dịch Đạo đức kinh ra tiếng Phạn là Ngài:",
+options:["Nghĩa Tịnh","Bất Không","Chân Đế","Huyền Tráng"],
+answer:3
+},
+
+{
+q:"58. 'Ngũ chủng bất phiên', lý luận dịch kinh này của Ngài:",
+options:["Huyền Tráng","Chân Đế","Bất Không","Nghĩa Tịnh"],
+answer:0
+},
+
+{
+q:"59. Ngài Bất Không dịch các kinh điển:",
+options:["Niết bàn Tông","Duy Thức Tông","Thiền Tông","Mật Tông"],
+answer:3
+},
+
+{
+q:"60. Đệ tử nối pháp của Ngài Bất Không là Ngài:",
+options:["Chân Đế","Huệ Quả","Không Hải","Nghĩa Tịnh"],
+answer:1
+},
+
+{
+q:"61. Ngài Huệ Quả là thầy của Ngài:",
+options:["Không Hải","Nghĩa Tịnh","Bất Không","Huyền Tráng"],
+answer:0
+},
+
+{
+q:"62. Ngài Không Hải là:",
+options:[
+"khai tổ Tịnh độ tông Nhật Bản",
+"khai tổ Thiền tông Nhật Bản",
+"khai tổ Chân Ngôn tông Nhật Bản",
+"khai tổ Niết bàn tông Nhật Bản"
+],
+answer:2
+},
+
+{
+q:"63. Thời kỳ Tống chủ yếu là những tác phẩm do:",
+options:[
+"người Ấn Độ dịch",
+"người Ấn Độ trước tác",
+"người Trung Quốc dịch",
+"người Trung Quốc trước tác"
+],
+answer:3
+},
+
+{
+q:"64. Dịch giả Bộ Hoa Nghiêm 80 quyển là Ngài:",
+options:["Chân Đế","Thực Xoa Nan Đà","Huyền Tráng","Giác Hiền"],
+answer:1
+},
+
+{
+q:"65. Dịch giả Bộ Hoa Nghiêm 80 quyển là Ngài:",
+options:[
+"Thực Xoa Nan Đà đời Đông Tấn",
+"Thực Xoa Nan Đà đời Đường",
+"Giác Hiền đời Đông Tấn",
+"Giác Hiền đời Đường"
+],
+answer:1
+},
+
+{
+q:"66. Các hình thức của Đại tạng kinh:",
+options:[
+"Tụng đọc, khắc, điện tử",
+"Tụng đọc, chép, khắc, in, điện tử",
+"Tụng đọc, chép, khắc, điện tử",
+"Tụng đọc, khắc, in, điện tử"
+],
+answer:1
+},
+
+{
+q:"67. Kinh sách Phật giáo đầu tiên được:",
+options:[
+"Chép trên lá bối",
+"Chép trên giấy",
+"Khắc trên đá",
+"Khắc bằng bản gỗ"
+],
+answer:0
+},
+
+{
+q:"68. Có bao nhiêu bản Hán dịch Kinh Kim Cang:",
+options:["6 bản dịch","4 bản dịch","9 bản dịch","12 bản dịch"],
+answer:0
+},
+
+{
+q:"69. Trong các dịch phẩm của Ngài Cưu Ma La Thập, Thiền pháp yếu giải ảnh hưởng:",
+options:["Tịnh Độ Tông","Hoa Nghiêm Tông","Thiền Tông","Thiên Thai Tông"],
+answer:2
+},
+
+{
+q:"70. Trong các dịch phẩm của Ngài Cưu Ma La Thập, Tọa thiền tam muội kinh ảnh hưởng:",
+options:["Tịnh Độ Tông","Hoa Nghiêm Tông","Thiền Tông","Thiên Thai Tông"],
+answer:2
+},
+
+{
+q:"71. Có bao nhiêu bản dịch Kinh Kim Cang bằng chữ Hán:",
+options:["6 bản dịch","4 bản dịch","9 bản dịch","12 bản dịch"],
+answer:0
+},
+
+{
+q:"72. Có bao nhiêu bản dịch Kinh Pháp Hoa bằng chữ Hán:",
+options:["3 bản dịch","4 bản dịch","5 bản dịch","6 bản dịch"],
+answer:3
+},
+
+{
+q:"73. Có bao nhiêu bản dịch Kinh Duy Ma bằng chữ Hán:",
+options:["3 bản dịch","4 bản dịch","5 bản dịch","6 bản dịch"],
+answer:0
+},
+
+{
+q:"74. Các dịch phẩm định bản của Ngài Cưu Ma La Thập:",
+options:[
+"Kinh Duy Ma, Kinh Pháp Hoa",
+"Kinh Pháp Hoa, kinh Giải Thâm Mật",
+"Kinh Duy Ma, Kinh Hoa Nghiêm",
+"Kinh Hoa Nghiêm, kinh Phạm Võng"
+],
+answer:0
+},
+
+{
+q:"75. Các dịch phẩm định bản của Ngài Cưu Ma La Thập:",
+options:[
+"Kinh Pháp Hoa, Kinh Kim Cang",
+"Kinh Pháp Hoa, kinh Giải Thâm Mật",
+"Kinh Pháp Hoa, Kinh Hoa Nghiêm",
+"kinh Phạm Võng, Kinh Hoa Nghiêm"
+],
+answer:0
+},
+
+{
+q:"76. Sơ Tổ Tịnh độ tông là Ngài:",
+options:["Chi Lâu Ca Sấm","Huệ Viễn","Trúc Pháp Hộ","Cưu Ma La Thập"],
+answer:1
+},
+
+{
+q:"77. Quá trình phiên dịch kinh Phật tại Trung Quốc kéo dài:",
+options:["Hơn ngàn năm","Hơn 400 năm","Hơn 500 năm","Hơn 200 năm"],
+answer:0
+},
+
+{
+q:"78. Cao Tăng thời Tùy Đường là Ngài:",
+options:[
+"Huyền Tráng, Chân Đế",
+"Bất Không, Huệ Viễn",
+"Huyền Tráng, Bất Không",
+"Nghĩa Tịnh, Huệ Viễn"
+],
+answer:2
+},
+
+{
+q:"79. Cao Tăng thời Tùy Đường là Ngài:",
+options:[
+"Huyền Tráng, Chân Đế",
+"Bất Không, Huệ Viễn",
+"Huyền Tráng, Nghĩa Tịnh",
+"Bất Không, Huệ Viễn"
+],
+answer:2
+},
+
+{
+q:"80. Ngài Không Hải là:",
+options:[
+"khai tổ Chân Ngôn tông Trung Quốc",
+"khai tổ Chân Ngôn tông Ấn Độ",
+"khai tổ Chân Ngôn tông Nhật Bản",
+"khai tổ Chân Ngôn tông Cao Ly"
+],
+answer:2
+},
+
+];
+
+const quiz = document.getElementById("quiz");
+
+questions.forEach((item,index)=>{
+
+    let html = `
+    <div class="question">
+        <h3>${item.q}</h3>
+    `;
+
+    item.options.forEach((opt,i)=>{
+
+        html += `
+        <div class="option"
+            onclick="checkAnswer(this,${index},${i})">
+            ${String.fromCharCode(65+i)}. ${opt}
+        </div>
+        `;
+
+    });
+
+    html += `
+        <div class="result" id="result-${index}"></div>
+    </div>
+    `;
+
+    quiz.innerHTML += html;
+
+});
+
+let correctCount = 0;
+let lockedQuestions = {};
+
+function checkAnswer(el,qIndex,optIndex){
+
+    if(lockedQuestions[qIndex]) return;
+
+    const questionDiv = el.parentElement;
+    const options = questionDiv.querySelectorAll(".option");
+    const result = document.getElementById(`result-${qIndex}`);
+
+    if(optIndex === questions[qIndex].answer){
+
+        el.classList.add("correct");
+
+        result.innerHTML = "✅ Chính xác";
+        result.className = "result correct-text";
+
+        lockedQuestions[qIndex] = true;
+        correctCount++;
+
+        options.forEach(o=>{
+            o.classList.add("locked");
+        });
+
+    }else{
+
+        el.classList.add("wrong");
+
+        result.innerHTML = "❌ Sai, hãy chọn lại";
+        result.className = "result wrong-text";
+
+        setTimeout(()=>{
+            el.classList.remove("wrong");
+        },600);
+
+    }
+
+}
+
+function submitQuiz(){
+
+    const total = questions.length;
+
+    document.getElementById("scoreBox").style.display="block";
+
+    document.getElementById("scoreText").innerHTML =
+        `Bạn đã làm đúng <strong>${correctCount}/${total}</strong> câu`;
+
+}
+</script>
+
+</body>
+</html>
